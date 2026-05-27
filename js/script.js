@@ -150,11 +150,11 @@ async function generateExcel(){
 
       }else{
 
-        sheet[cellAddress] = {
-          t:"s",
-          v:insurance[key]
-            .toLocaleString()
-        };
+        XLSX.utils.sheet_add_aoa(
+          sheet,
+          [[insurance[key].toLocaleString()]],
+          { origin: cellAddress }
+        );
       }
     }
   });

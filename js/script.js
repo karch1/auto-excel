@@ -23,11 +23,15 @@ const rowMap = {
 
 const columnMap = {
 
-  "4칸": ["D","F","H","J"],
-  "5칸": ["D","F","H","J","L"],
-  "6칸": ["D","F","H","J","L","N"],
-  "7칸": ["D","F","H","J","L","N","P"],
-  "8칸": ["D","F","H","J","L","N","P","R"]
+  "2칸": ["F","G"],
+  "3칸": ["F","G","H"],
+  "4칸": ["F","G","H","I"],
+  "5칸": ["F","G","H","I","J"],
+  "6칸": ["F","G","H","I","J","K"],
+  "7칸": ["F","G","H","I","J","K","L"],
+  "8칸": ["F","G","H","I","J","K","L","M"],
+  "9칸": ["F","G","H","I","J","K","L","M","N"]
+
 };
 
 document
@@ -94,12 +98,6 @@ async function generateExcel(){
 
   const insuranceCount =
     insuranceData.length;
-
-  if(insuranceCount < 4){
-
-    alert("보험은 최소 4개 입력해주세요.");
-    return;
-  }
 
   const sheetName =
     `${insuranceCount}칸`;

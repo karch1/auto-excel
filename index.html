@@ -9,34 +9,81 @@
   <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 
   <style>
+
     body{
-      font-family: sans-serif;
+      font-family:sans-serif;
       padding:20px;
+      background:#f5f5f5;
+    }
+
+    h2{
+      margin-top:30px;
+    }
+
+    input{
+      width:100%;
+      height:45px;
+      margin-bottom:20px;
+      padding:10px;
+      font-size:16px;
+      box-sizing:border-box;
     }
 
     textarea{
       width:100%;
-      height:200px;
+      height:160px;
       margin-bottom:20px;
-      font-size:16px;
+      padding:10px;
+      font-size:15px;
+      box-sizing:border-box;
+      resize:none;
     }
 
     button{
       width:100%;
-      height:50px;
+      height:55px;
       font-size:18px;
+      border:none;
+      background:#111;
+      color:white;
+      cursor:pointer;
     }
+
   </style>
 </head>
 <body>
 
-  <h2>보험1 입력</h2>
+  <h1>보장분석 자동화</h1>
 
-  <textarea id="insurance1">
-암 2000
-소액암 200
-카티 5000
-  </textarea>
+  <input
+    type="text"
+    id="customerName"
+    placeholder="고객명 입력"
+  >
+
+  <h2>보험1</h2>
+  <textarea id="insurance1"></textarea>
+
+  <h2>보험2</h2>
+  <textarea id="insurance2"></textarea>
+
+  <h2>보험3</h2>
+  <textarea id="insurance3"></textarea>
+
+  <h2>보험4</h2>
+  <textarea id="insurance4"></textarea>
+
+  <h2>보험5</h2>
+  <textarea id="insurance5"></textarea>
+
+  <h2>보험6</h2>
+  <textarea id="insurance6"></textarea>
+
+  <h2>보험7</h2>
+  <textarea id="insurance7"></textarea>
+
+  <h2>보험8</h2>
+  <textarea id="insurance8"></textarea>
 
   <button id="downloadBtn">
     엑셀 다운로드

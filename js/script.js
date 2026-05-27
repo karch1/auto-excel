@@ -159,8 +159,9 @@ async function generateExcel(){
     }
   });
 
-  XLSX.writeFile(
-    workbook,
-    `${customerName}_보장분석.xlsx`
-  );
+    XLSX.writeFile(workbook, `${customerName}_보장분석.xlsx`, { 
+      bookType: 'xlsx', 
+      type: 'binary',
+      compression: true // 압축 옵션 추가
+  });
 }

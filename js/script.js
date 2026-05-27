@@ -6,19 +6,19 @@ const aliases = {
 
   "카티": "carT",
 
-  "심혈관": "cardio",
+  "심혈관수술": "cardio",
   "심혈관진단": "cardio",
 
-  "뇌혈관": "brain"
+  "뇌혈관진단": "brain"
 };
 
 const rowMap = {
 
-  generalCancer: 20,
-  smallCancer: 22,
-  carT: 24,
-  cardio: 26,
-  brain: 28
+  generalCancer: 14,
+  smallCancer: 15,
+  carT: 20,
+  cardio: 27,
+  brain: 24
 };
 
 const columnMap = {

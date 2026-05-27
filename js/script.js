@@ -70,98 +70,54 @@ function parseCoverage(text){
   return result;
 }
 
-async function generateExcel(){
-
-  const customerName =
-    document
-      .getElementById("customerName")
-      .value
-      .trim() || "고객";
+async function generateExcel() {
+  const customerName = document.getElementById("customerName").value.trim() || "고객";
+  const customerAge = document.getElementById("customerAge").value.trim() || "0";
+  const customerGender = document.getElementById("customerGender").value.trim() || "성별";
 
   const insuranceData = [];
-
-  for(let i=1; i<=8; i++){
-
-    const text =
-      document
-        .getElementById(`insurance${i}`)
-        .value
-        .trim();
-
-    if(text){
-
-      insuranceData.push(
-        parseCoverage(text)
-      );
-    }
+  for (let i = 1; i <= 8; i++) {
+    const text = document.getElementById(`insurance${i}`).value.trim();
+    if (text) insuranceData.push(parseCoverage(text));
   }
 
-  const insuranceCount =
-    insuranceData.length;
+  const response = await fetch("./excel/template.xlsx");
+  const arrayBuffer = await response.arrayBuffer();
+  const workbook = XLSX.read(arrayBuffer, { type: "array" });
 
-  const sheetName =
-    `${insuranceCount}칸`;
-
-  const response =
-    await fetch("./excel/template.xlsx");
-
-  const arrayBuffer =
-    await response.arrayBuffer();
-
-  const workbook =
-    XLSX.read(arrayBuffer, {
-      type: "array"
-    });
-
-  console.log(workbook.SheetNames);
-
-  const sheet =
-    workbook.Sheets[sheetName];
-
-  if(!sheet){
-
-    alert(`${sheetName} 시트를 찾을 수 없습니다.`);
+  // 핵심: 이제 시트 이름(2칸, 3칸...)을 찾지 않고 무조건 'Date' 시트에 씁니다.
+  const sheet = workbook.Sheets['Date']; 
+  
+  if (!sheet) {
+    alert("엑셀 파일에 'Date' 시트가 없습니다.");
     return;
   }
 
-  const columns =
-    columnMap[sheetName];
+  // 1. 고객 정보 입력 (Date 시트의 A1, A2, C3 셀에 씀)
+  XLSX.utils.sheet_add_aoa(sheet, [[customerName]], { origin: 'A1' });
+  XLSX.utils.sheet_add_aoa(sheet, [[customerAge]], { origin: 'A2' });
+  XLSX.utils.sheet_add_aoa(sheet, [[customerGender]], { origin: 'C3' });
+
+  // 2. 보험 데이터 입력
+  // 2칸~9칸 시트의 컬럼 배열을 정의하는 columnMap을 그대로 사용하되, 
+  // 여기서는 단순히 보험 개수에 맞는 열(F, G, H...)을 순서대로 할당합니다.
+  const insuranceCount = insuranceData.length;
+  const columns = ["F", "G", "H", "I", "J", "K", "L", "M", "N"];
 
   insuranceData.forEach((insurance, index) => {
-
-    const column =
-      columns[index];
-
-    for(const key in insurance){
-
-      const row =
-        rowMap[key];
-
-      if(!row) continue;
-
-      const cellAddress =
-        column + row;
-
-      if(sheet[cellAddress]){
-
-        sheet[cellAddress].v =
-          insurance[key]
-            .toLocaleString();
-
-      }else{
-
-        XLSX.utils.sheet_add_aoa(
-          sheet,
-          [[insurance[key].toLocaleString()]],
-          { origin: cellAddress }
-        );
-      }
+    const column = columns[index]; // 0번째 보험은 F열, 1번째는 G열...
+    for (const key in insurance) {
+      const row = rowMap[key];
+      if (!row) continue;
+      
+      // Date 시트의 특정 좌표(예: F14, G14)에 값 입력
+      XLSX.utils.sheet_add_aoa(sheet, [[insurance[key].toLocaleString()]], { origin: column + row });
     }
   });
 
-    XLSX.writeFile(workbook, `${customerName}_보장분석.xlsx`, { 
-      bookType: 'xlsx', 
-      type: 'binary',
-      compression: true // 압축 옵션 추가
+  // 3. 파일 저장
+  XLSX.writeFile(workbook, `${customerName}_보장분석.xlsx`, { 
+    bookType: 'xlsx', 
+    compression: true 
   });
 }

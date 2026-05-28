@@ -64,87 +64,37 @@ const aliases = {
 };
 
 const rowMap = {
-
-  // 사망
-  generalDeath: 8,
-  accidentDeath: 9,
-  diseaseDeath: 10,
-
-  // 후유장해
-  accidentDisability: 12,
-  diseaseDisability: 13,
-
-  // 암
-  highCancer: 15,
-  generalCancer: 16,
-  smallCancer: 17,
-  recurrenceCancer: 18,
-  antiCancer: 19,
-  cancerSurgery: 20,
-  cancerPatient: 21,
-  carT: 22,
-  cancerTreatment: 23,
-
-  // 뇌
-  brainStroke: 25,
-  brainDiagnosis: 26,
-  brainBloodVessel: 27,
-  brainSurgery: 28,
-
-  // 심장
-  heartAttack: 30,
-  cardioDiagnosis: 31,
-  cardioSurgery: 32,
-
-  // 산정특례
-  specialCaseOnce: 34,
-  specialCaseYear: 35,
-
-  // 상해수술
-  accidentSurgery: 37,
-  accidentSurgeryGrade: 38,
-
-  // 질병수술
-  diseaseSurgery: 40,
-  diseaseSurgeryGrade: 41,
-  majorSurgery: 42,
-
-  // 입원일당
-  accidentHospital: 45,
-  diseaseHospital: 46,
-  oneRoom: 47,
-  multiRoom: 48,
-  caregiver: 49,
-  nursingCare: 50,
-
-  // 실손
-  actualAccidentIn: 52,
-  actualAccidentOut: 53,
-  actualDiseaseIn: 54,
-  actualDiseaseOut: 55,
-  nonBenefit: 56,
-
-  // 골절
-  fractureDiagnosis: 58,
-  fractureSurgery: 59,
-  castTreatment: 60,
-
-  // 화상
-  burnDiagnosis: 62,
-  burnSurgery: 63,
-
-  // 응급실
-  emergency: 65,
-
-  // 배상
-  liability: 67,
-
-  // 운전자
-  trafficSupport: 69,
-  lawyerFee: 70,
-  licenseSupport: 71,
-  loanSupport: 72,
-  carAccident: 73
+    // 1. 사망 (8~10행)
+    generalDeath: 8, accidentDeath: 9, diseaseDeath: 10,
+    // 2. 후유장해 (11~12행)
+    accidentDisability: 11, diseaseDisability: 12,
+    // 3. 3대 진단·수술 (암 13~21, 뇌 22~25, 심장 26~28)
+    highCancer: 13, generalCancer: 14, smallCancer: 15, recurrenceCancer: 16,
+    antiCancer: 17, cancerSurgery: 18, cancerPatient: 19, carT: 20, cancerTreatment: 21,
+    brainDiagnosis: 22, brainStroke: 23, brainBloodVessel: 24, brainSurgery: 25,
+    heartAttack: 26, cardioDiagnosis: 27, cardioSurgery: 28,
+    // 4. 산정특례 (29~30행)
+    specialCaseOnce: 29, specialCaseYear: 30,
+    // 5. 수술 (상해 31~32, 질병 33~36)
+    accidentSurgery: 31, accidentSurgeryGrade: 32,
+    diseaseSurgery: 33, diseaseSurgeryGrade: 34, majorSurgery: 35,
+    // 6. 입원일당 (37~42행)
+    accidentHospital: 37, diseaseHospital: 38, oneRoom: 39, 
+    multiRoom: 40, caregiver: 41, nursingCare: 42,
+    // 7. 실손의료비 (43~47행)
+    actualAccidentIn: 43, actualAccidentOut: 44, 
+    actualDiseaseIn: 45, actualDiseaseOut: 46, nonBenefit: 47,
+    // 8. 골절 (48~50행)
+    fractureDiagnosis: 48, fractureSurgery: 49, castTreatment: 50,
+    // 9. 화상 (51~52행)
+    burnDiagnosis: 51, burnSurgery: 52,
+    // 10. 응급실 (53행)
+    emergency: 53,
+    // 11. 배상 (54행)
+    liability: 54,
+    // 12. 운전자보험 (55~60행)
+    trafficSupport: 55, lawyerFee: 56, licenseSupport: 57, 
+    loanSupport: 58, carAccident: 59
 };
 
 const columnMap = {
@@ -241,14 +191,24 @@ async function generateExcel() {
     return;
   }
 
+  // 2. 보험 데이터 입력 부분 수정
   insuranceData.forEach((insurance, index) => {
-    const column = columns[index]; // 0번째 보험은 F열, 1번째는 G열...
+    const column = columns[index]; // F, G, H...
+    
     for (const key in insurance) {
       const row = rowMap[key];
       if (!row) continue;
       
-      // Date 시트의 특정 좌표(예: F14, G14)에 값 입력
-      XLSX.utils.sheet_add_aoa(sheet, [[insurance[key]]], { origin: column + row });
+      const address = column + row;
+      const val = insurance[key];
+
+      // [핵심] sheet_add_aoa 대신 직접 객체 수정 (병합 서식 보호)
+      if (!sheet[address]) {
+        sheet[address] = { t: 's', v: val };
+      } else {
+        sheet[address].v = val;
+        sheet[address].t = isNaN(val.replace(/,/g, '')) ? 's' : 'n';
+      }
     }
   });
 

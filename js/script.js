@@ -187,17 +187,17 @@ async function generateExcel() {
   }
 
   // 고객 정보 입력
-  if (!sheet["Q1"]) sheet["Q1"] = {};
-  if (!sheet["R1"]) sheet["R1"] = {};
-  if (!sheet["S1"]) sheet["S1"] = {};
+  sheet["Q1"].v = excelCustomerName;
+  sheet["R1"].v = Number(customerAge);
+  sheet["S1"].v = customerGender;
 
-sheet["Q1"].v = excelCustomerName;
-sheet["R1"].v = customerAge;
-sheet["S1"].v = customerGender;
+  sheet["Q1"].t = "s";
+  sheet["R1"].t = "n";
+  sheet["S1"].t = "s";
 
-sheet["Q1"].t = "s";
-sheet["R1"].t = "n";
-sheet["S1"].t = "s";
+  delete sheet["Q1"].w;
+  delete sheet["R1"].w;
+  delete sheet["S1"].w;
 
   // 2. 보험 데이터 입력
   // 2칸~9칸 시트의 컬럼 배열을 정의하는 columnMap을 그대로 사용하되, 
@@ -223,7 +223,7 @@ const val = String(insurance[key]);
 
       // 셀없으면 생성
 if (!sheet[address]) {
-  sheet[address] = {};
+  continue;
 }
 
       // 

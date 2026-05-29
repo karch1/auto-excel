@@ -208,23 +208,35 @@ async function generateExcel() {
   insuranceMetaData.forEach((meta, index) => {
     const column = columns[index];
 
-    // 1. 메타 데이터 입력
-    sheet.getCell(`${column}3`).value = meta.payPeriod;
-    sheet.getCell(`${column}4`).value = meta.company;
-    
-    const productCell = sheet.getCell(`${column}5`);
-    const isRenewProduct = meta.product.includes("갱");
-    productCell.value = meta.product.replace(/\(갱\)/g, "").replace(/갱/g, "").trim();
-    if (isRenewProduct) productCell.font = { color: { argb: "FF00B0F0" } };
-    productCell.alignment = { shrinkToFit: true };
+   // 1. 메타 데이터 입력
+sheet.getCell(`${column}3`).value = meta.payPeriod;
+sheet.getCell(`${column}4`).value = meta.company;
 
-    sheet.getCell(`${column}6`).value = meta.joinDate;
+// 상품명 셀
+const productCell = sheet.getCell(`${column}5`);
+const isRenewProduct = meta.product.includes("갱");
+productCell.value = meta.product.replace(/\(갱\)/g, "").replace(/갱/g, "").trim();
 
-    const feeCell = sheet.getCell(`${column}7`);
-    feeCell.value = Number(meta.monthlyFee.replace(/[^0-9]/g, ""));
-    feeCell.numFmt = '#,##0"원"';
-    feeCell.font = { name: 'Arial', family: 2, size: 11, color: { argb: "FFFF0000" } };
+// 스타일 객체를 가져와 수정 후 다시 적용 (기존 정렬 유지)
+let productStyle = { ...productCell.style };
+productStyle.alignment = { ...productStyle.alignment, shrinkToFit: true, vertical: 'middle', horizontal: 'center' };
+if (isRenewProduct) {
+    productStyle.font = { ...productStyle.font, color: { argb: "FF00B0F0" } };
+}
+productCell.style = productStyle;
 
+sheet.getCell(`${column}6`).value = meta.joinDate;
+
+// 납입보험료 셀
+const feeCell = sheet.getCell(`${column}7`);
+feeCell.value = Number(meta.monthlyFee.replace(/[^0-9]/g, ""));
+feeCell.numFmt = '#,##0"원"';
+
+// 스타일 객체를 가져와 수정 후 다시 적용
+let feeStyle = { ...feeCell.style };
+feeStyle.font = { ...feeStyle.font, color: { argb: "FFFF0000" }, name: 'Arial', size: 11 };
+feeStyle.alignment = { ...feeStyle.alignment, vertical: 'middle', horizontal: 'center' };
+feeCell.style = feeStyle;
     // 2. 보장 데이터 입력
     const currentInsurance = insuranceData[index];
     if (currentInsurance) {

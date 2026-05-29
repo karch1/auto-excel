@@ -159,7 +159,12 @@ function parseCoverage(text){
 }
 
 async function generateExcel() {
-  const customerName = document.getElementById("customerName").value.trim() || "고객";
+  // 다운로드이름
+  const fileCustomerName =
+  document.getElementById("fileCustomerName").value.trim() || "고객";
+  // 안에 고객 이름
+  const excelCustomerName =
+  document.getElementById("excelCustomerName").value.trim() || "고객";
   const customerAge = document.getElementById("customerAge").value.trim() || "0";
   const customerGender = document.getElementById("customerGender").value.trim() || "성별";
 
@@ -186,7 +191,7 @@ async function generateExcel() {
   if (!sheet["R1"]) sheet["R1"] = {};
   if (!sheet["S1"]) sheet["S1"] = {};
 
-sheet["Q1"].v = customerName;
+sheet["Q1"].v = excelCustomerName;
 sheet["R1"].v = customerAge;
 sheet["S1"].v = customerGender;
 
@@ -240,7 +245,7 @@ if (
   });
 
   // 3. 파일 저장
-  XLSX.writeFile(workbook, `${customerName}_보장분석.xlsx`, { 
+  XLSX.writeFile(workbook,`${fileCustomerName}_보장분석.xlsx`, { 
     bookType: 'xlsx', 
     compression: true 
   });

@@ -259,3 +259,20 @@ link.download =
 
 link.click();
 }
+
+// textarea 자동 높이
+document.querySelectorAll("textarea").forEach(textarea => {
+
+  // 최초 실행
+  textarea.style.height = "auto";
+  textarea.style.height = textarea.scrollHeight + "px";
+
+  // 입력 시 자동 증가
+  textarea.addEventListener("input", () => {
+
+    textarea.style.height = "auto";
+    textarea.style.height = textarea.scrollHeight + "px";
+
+  });
+
+});

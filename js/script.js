@@ -176,28 +176,21 @@ async function generateExcel() {
 
   const response = await fetch("./excel/template.xlsx");
   const arrayBuffer = await response.arrayBuffer();
-  const workbook = XLSX.read(arrayBuffer, { type: "array" });
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(arrayBuffer);
 
-  // 핵심: 이제 시트 이름(2칸, 3칸...)을 찾지 않고 무조건 'Date' 시트에 씁니다.
-  const sheet = workbook.Sheets['Date']; 
-  
+  // 시트 접근
+  const sheet = workbook.getWorksheet("Date");
+ 
   if (!sheet) {
     alert("엑셀 파일에 'Date' 시트가 없습니다.");
     return;
   }
 
   // 고객 정보 입력
-  sheet["Q1"].v = excelCustomerName;
-  sheet["R1"].v = Number(customerAge);
-  sheet["S1"].v = customerGender;
-
-  sheet["Q1"].t = "s";
-  sheet["R1"].t = "n";
-  sheet["S1"].t = "s";
-
-  delete sheet["Q1"].w;
-  delete sheet["R1"].w;
-  delete sheet["S1"].w;
+  sheet.getCell("Q1").value = excelCustomerName;
+  sheet.getCell("R1").value = Number(customerAge);
+  sheet.getCell("S1").value = customerGender;
 
   // 2. 보험 데이터 입력
   // 2칸~9칸 시트의 컬럼 배열을 정의하는 columnMap을 그대로 사용하되, 
@@ -211,42 +204,58 @@ async function generateExcel() {
   }
 
   // 2. 보험 데이터 입력 부분 수정
-  insuranceData.forEach((insurance, index) => {
-    const column = columns[index]; // F, G, H...
-    
-    for (const key in insurance) {
-      const row = rowMap[key];
-      if (!row) continue;
-      
-     const address = column + row;
-const val = String(insurance[key]);
+insuranceData.forEach((insurance, index) => {
+  const column = columns[index];
 
-      // 셀없으면 생성
-if (!sheet[address]) {
-  continue;
-}
+  for (const key in insurance) {
 
-      // 
-const cleanNumber = Number(
-  val.replace(/,/g, "")
-);
+    const row = rowMap[key];
+    if (!row) continue;
 
-if (
-  val.includes("억") ||
-  isNaN(cleanNumber)
-) {
-  sheet[address].v = val;
-  sheet[address].t = "s";
-} else {
-  sheet[address].v = cleanNumber;
-  sheet[address].t = "n";
-}
-      }
-  });
+    const address = column + row;
+    const val = String(insurance[key]);
+
+    const cell = sheet.getCell(address);
+
+    const cleanNumber = Number(
+      val.replace(/,/g, "")
+    );
+
+    if (
+      val.includes("억") ||
+      isNaN(cleanNumber)
+    ) {
+
+      cell.value = val;
+
+    } else {
+
+      cell.value = cleanNumber;
+    }
+  }
+});
+
+// 수식 재계산 강제
+workbook.calcProperties.fullCalcOnLoad = true;
+workbook.calcProperties.forceFullCalc = true;
 
   // 3. 파일 저장
-  XLSX.writeFile(workbook,`${fileCustomerName}_보장분석.xlsx`, { 
-    bookType: 'xlsx', 
-    compression: true 
-  });
+  const buffer = await workbook.xlsx.writeBuffer();
+
+const blob = new Blob(
+  [buffer],
+  {
+    type:
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  }
+);
+
+const link = document.createElement("a");
+
+link.href = URL.createObjectURL(blob);
+
+link.download =
+  `${fileCustomerName}_보장분석.xlsx`;
+
+link.click();
 }

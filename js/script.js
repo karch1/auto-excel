@@ -276,3 +276,52 @@ document.querySelectorAll("textarea").forEach(textarea => {
   });
 
 });
+
+for (let i = 1; i <= 8; i++) {
+
+  // 가입연도 자동 포맷
+  const joinDateInput =
+  document.getElementById(`joinDate${i}`);
+
+  joinDateInput.addEventListener("input", e => {
+
+    let value =
+    e.target.value.replace(/[^0-9]/g, "");
+
+    if (value.length > 8) {
+      value = value.slice(0, 8);
+    }
+
+    if (value.length >= 5) {
+
+      value =
+        value.slice(0,4) + "." +
+        value.slice(4,6) + "." +
+        value.slice(6,8);
+
+    }
+
+    e.target.value = value;
+
+  });
+
+  // 납입보험료 자동 포맷
+  const monthlyFeeInput =
+  document.getElementById(`monthlyFee${i}`);
+
+  monthlyFeeInput.addEventListener("input", e => {
+
+    let value =
+    e.target.value.replace(/[^0-9]/g, "");
+
+    if (!value) {
+      e.target.value = "";
+      return;
+    }
+
+    e.target.value =
+      Number(value).toLocaleString() + "원";
+
+  });
+
+}

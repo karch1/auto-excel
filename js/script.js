@@ -236,64 +236,64 @@ insuranceMetaData.forEach((meta, index) => {
   meta.company;
 
   // 상품명
-  const productCell =
-  sheet.getCell(`${column}5`);
+const productCell =
+sheet.getCell(`${column}5`);
 
-  productCell.value =
-  meta.product;
+const isRenewProduct =
+meta.product.includes("갱");
 
-  // 상품명 길이 따라 폰트 축소
-  const length =
-  meta.product.length;
+const cleanProduct =
+meta.product
+  .replace(/\(갱\)/g, "")
+  .replace(/갱/g, "")
+  .trim();
 
-  let fontSize = 11;
+productCell.value =
+cleanProduct;
 
-  if (length > 25) {
-
-    fontSize = 8;
-
-  } else if (length > 18) {
-
-    fontSize = 9;
-
-  } else if (length > 12) {
-
-    fontSize = 10;
-
-  }
+if (isRenewProduct) {
 
   productCell.font = {
-    name: "맑은 고딕",
-    size: fontSize
+    ...productCell.font,
+    color: { argb: "FF00B0F0" }
   };
 
-  // 가입연도
-  sheet.getCell(`${column}6`).value =
-  meta.joinDate;
+}
 
-  // 납입보험료
-  const feeCell =
-  sheet.getCell(`${column}7`);
+productCell.alignment = {
+  ...productCell.alignment,
+  shrinkToFit: true
+};
 
-  const feeNumber = Number(
-    meta.monthlyFee.replace(/[^0-9]/g, "")
-  );
+// 가입연도
+sheet.getCell(`${column}6`).value =
+meta.joinDate;
 
-  feeCell.value = feeNumber;
+// 납입보험료
+const feeCell =
+sheet.getCell(`${column}7`);
 
-  // 118,000원 형식
-  feeCell.numFmt =
-  '#,##0"원"';
+const feeNumber = Number(
+  meta.monthlyFee.replace(/[^0-9]/g, "")
+);
 
-  // 빨간색
-  feeCell.font = {
+feeCell.value = feeNumber;
+
+feeCell.numFmt =
+'#,##0"원"';
+
+feeCell.style = {
+  ...feeCell.style,
+  font: {
+    ...feeCell.font,
     color: { argb: "FFFF0000" }
+    }
   };
-
 });
   
   // 2. 보험 데이터 입력 부분 수정
 insuranceData.forEach((insurance, index) => {
+
   const column = columns[index];
 
   for (const key in insurance) {
@@ -302,14 +302,26 @@ insuranceData.forEach((insurance, index) => {
     if (!row) continue;
 
     const address = column + row;
-    const val = String(insurance[key]);
 
-    const cell = sheet.getCell(address);
+    const rawVal =
+      String(insurance[key]);
+
+    const isRenew =
+      rawVal.includes("갱");
+
+    const val = rawVal
+      .replace(/\(갱\)/g, "")
+      .replace(/갱/g, "")
+      .trim();
+
+    const cell =
+      sheet.getCell(address);
 
     const cleanNumber = Number(
       val.replace(/,/g, "")
     );
 
+    // 값 입력
     if (
       val.includes("억") ||
       isNaN(cleanNumber)
@@ -320,9 +332,24 @@ insuranceData.forEach((insurance, index) => {
     } else {
 
       cell.value = cleanNumber;
+
     }
+
+    // 갱신형이면 하늘색
+    if (isRenew) {
+
+      cell.font = {
+        ...cell.font,
+        color: { argb: "FF00B0F0" }
+      };
+
+    }
+
   }
+
 });
+
+  
 
 // 수식 재계산 강제
 workbook.calcProperties.fullCalcOnLoad = true;

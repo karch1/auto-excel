@@ -169,11 +169,31 @@ async function generateExcel() {
   const customerGender = document.getElementById("customerGender").value.trim() || "성별";
 
   const insuranceData = [];
-  for (let i = 1; i <= 8; i++) {
-    const text = document.getElementById(`insurance${i}`).value.trim();
-    if (text) insuranceData.push(parseCoverage(text));
-  }
+  const insuranceMetaData = [];
 
+  for (let i = 1; i <= 8; i++) {
+  const text =
+  document.getElementById(`insurance${i}`).value.trim();
+
+  if (text) {
+    // 보장 데이터
+    insuranceData.push(parseCoverage(text));
+    // 상단 정보
+    insuranceMetaData.push({
+      payPeriod:
+      document.getElementById(`payPeriod${i}`).value.trim(),
+      company:
+      document.getElementById(`company${i}`).value.trim(),
+      product:
+      document.getElementById(`product${i}`).value.trim(),
+      joinDate:
+      document.getElementById(`joinDate${i}`).value.trim(),
+      monthlyFee:
+      document.getElementById(`monthlyFee${i}`).value.trim()
+    });
+  }
+}
+  
   const response = await fetch("./excel/template.xlsx");
   const arrayBuffer = await response.arrayBuffer();
   const workbook = new ExcelJS.Workbook();
@@ -203,6 +223,75 @@ async function generateExcel() {
     return;
   }
 
+insuranceMetaData.forEach((meta, index) => {
+
+  const column = columns[index];
+
+  // 납입기간 / 만기
+  sheet.getCell(`${column}3`).value =
+  meta.payPeriod;
+
+  // 보험회사
+  sheet.getCell(`${column}4`).value =
+  meta.company;
+
+  // 상품명
+  const productCell =
+  sheet.getCell(`${column}5`);
+
+  productCell.value =
+  meta.product;
+
+  // 상품명 길이 따라 폰트 축소
+  const length =
+  meta.product.length;
+
+  let fontSize = 11;
+
+  if (length > 25) {
+
+    fontSize = 8;
+
+  } else if (length > 18) {
+
+    fontSize = 9;
+
+  } else if (length > 12) {
+
+    fontSize = 10;
+
+  }
+
+  productCell.font = {
+    name: "맑은 고딕",
+    size: fontSize
+  };
+
+  // 가입연도
+  sheet.getCell(`${column}6`).value =
+  meta.joinDate;
+
+  // 납입보험료
+  const feeCell =
+  sheet.getCell(`${column}7`);
+
+  const feeNumber = Number(
+    meta.monthlyFee.replace(/[^0-9]/g, "")
+  );
+
+  feeCell.value = feeNumber;
+
+  // 118,000원 형식
+  feeCell.numFmt =
+  '#,##0"원"';
+
+  // 빨간색
+  feeCell.font = {
+    color: { argb: "FFFF0000" }
+  };
+
+});
+  
   // 2. 보험 데이터 입력 부분 수정
 insuranceData.forEach((insurance, index) => {
   const column = columns[index];

@@ -159,12 +159,8 @@ function parseCoverage(text){
 }
 
 async function generateExcel() {
-  // 다운로드이름
-  const fileCustomerName =
-  document.getElementById("fileCustomerName").value.trim() || "고객";
-  // 안에 고객 이름
-  const excelCustomerName =
-  document.getElementById("excelCustomerName").value.trim() || "고객";
+  const fileCustomerName = document.getElementById("fileCustomerName").value.trim() || "고객";
+  const excelCustomerName = document.getElementById("excelCustomerName").value.trim() || "고객";
   const customerAge = document.getElementById("customerAge").value.trim() || "0";
   const customerGender = document.getElementById("customerGender").value.trim() || "성별";
 
@@ -172,216 +168,94 @@ async function generateExcel() {
   const insuranceMetaData = [];
 
   for (let i = 1; i <= 8; i++) {
-  const text =
-  document.getElementById(`insurance${i}`).value.trim();
-
-  if (text) {
-    // 보장 데이터
-    insuranceData.push(parseCoverage(text));
-    // 상단 정보
-    insuranceMetaData.push({
-      payPeriod:
-      document.getElementById(`payPeriod${i}`).value.trim(),
-      company:
-      document.getElementById(`company${i}`).value.trim(),
-      product:
-      document.getElementById(`product${i}`).value.trim(),
-      joinDate:
-      document.getElementById(`joinDate${i}`).value.trim(),
-      monthlyFee:
-      document.getElementById(`monthlyFee${i}`).value.trim()
-    });
+    const text = document.getElementById(`insurance${i}`).value.trim();
+    if (text) {
+      insuranceData.push(parseCoverage(text));
+      insuranceMetaData.push({
+        payPeriod: document.getElementById(`payPeriod${i}`).value.trim(),
+        company: document.getElementById(`company${i}`).value.trim(),
+        product: document.getElementById(`product${i}`).value.trim(),
+        joinDate: document.getElementById(`joinDate${i}`).value.trim(),
+        monthlyFee: document.getElementById(`monthlyFee${i}`).value.trim()
+      });
+    }
   }
-}
-  
+
   const response = await fetch("./excel/template.xlsx");
   const arrayBuffer = await response.arrayBuffer();
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(arrayBuffer);
-
-  // 시트 접근
   const sheet = workbook.getWorksheet("Date");
- 
+
   if (!sheet) {
     alert("엑셀 파일에 'Date' 시트가 없습니다.");
     return;
   }
 
-  // 고객 정보 입력
   sheet.getCell("Q1").value = excelCustomerName;
   sheet.getCell("R1").value = Number(customerAge);
   sheet.getCell("S1").value = customerGender;
 
-  // 2. 보험 데이터 입력
-  // 2칸~9칸 시트의 컬럼 배열을 정의하는 columnMap을 그대로 사용하되, 
-  // 여기서는 단순히 보험 개수에 맞는 열(F, G, H...)을 순서대로 할당합니다.
- const insuranceCount = insuranceData.length;
- const columns = columnMap[`${insuranceCount}칸`];
+  const insuranceCount = insuranceData.length;
+  const columns = columnMap[`${insuranceCount}칸`];
 
   if (!columns) {
     alert("보험 개수는 2~9개까지만 가능합니다.");
     return;
   }
 
-insuranceMetaData.forEach((meta, index) => {
+  // 통합 루프: 메타데이터 + 보장데이터를 한 번에 처리
+  insuranceMetaData.forEach((meta, index) => {
+    const column = columns[index];
 
-  const column = columns[index];
+    // 1. 메타 데이터 입력
+    sheet.getCell(`${column}3`).value = meta.payPeriod;
+    sheet.getCell(`${column}4`).value = meta.company;
+    
+    const productCell = sheet.getCell(`${column}5`);
+    const isRenewProduct = meta.product.includes("갱");
+    productCell.value = meta.product.replace(/\(갱\)/g, "").replace(/갱/g, "").trim();
+    if (isRenewProduct) productCell.font = { color: { argb: "FF00B0F0" } };
+    productCell.alignment = { shrinkToFit: true };
 
-  // 납입기간 / 만기
-  sheet.getCell(`${column}3`).value =
-    meta.payPeriod;
+    sheet.getCell(`${column}6`).value = meta.joinDate;
 
-  // 보험회사
-  sheet.getCell(`${column}4`).value =
-    meta.company;
+    const feeCell = sheet.getCell(`${column}7`);
+    feeCell.value = Number(meta.monthlyFee.replace(/[^0-9]/g, ""));
+    feeCell.numFmt = '#,##0"원"';
+    feeCell.font = { name: 'Arial', family: 2, size: 11, color: { argb: "FFFF0000" } };
 
-  // 상품명
-  const productCell =
-    sheet.getCell(`${column}5`);
+    // 2. 보장 데이터 입력
+    const currentInsurance = insuranceData[index];
+    if (currentInsurance) {
+      for (const key in currentInsurance) {
+        const row = rowMap[key];
+        if (!row) continue;
+        const rawVal = String(currentInsurance[key]);
+        const isRenew = rawVal.includes("갱");
+        const val = rawVal.replace(/\(갱\)/g, "").replace(/갱/g, "").trim();
+        const cell = sheet.getCell(column + row);
+        const cleanNumber = Number(val.replace(/,/g, ""));
 
-  const isRenewProduct =
-    meta.product.includes("갱");
-
-  const cleanProduct =
-    meta.product
-      .replace(/\(갱\)/g, "")
-      .replace(/갱/g, "")
-      .trim();
-
-  productCell.value =
-    cleanProduct;
-
-  // 상품명만 파란색
-  if (isRenewProduct) {
-
-    productCell.font = {
-      ...productCell.font,
-      color: { argb: "FF00B0F0" }
-    };
-
-  }
-
-  productCell.alignment = {
-    ...productCell.alignment,
-    shrinkToFit: true
-  };
-
-  // 가입연도
-  sheet.getCell(`${column}6`).value =
-    meta.joinDate;
-
-  // 납입보험료
-  const feeCell =
-    sheet.getCell(`${column}7`);
-
-  const feeNumber = Number(
-    meta.monthlyFee.replace(/[^0-9]/g, "")
-  );
-
-  feeCell.value = feeNumber;
-
-  // 콤마 + 원
-  feeCell.numFmt = '#,##0"원"';
-
-  // 빨간색
-  feeCell.font = {
-    ...feeCell.font,
-    color: { argb: "FFFF0000" }
-  };
-
-}); // ← 이거 중요. 반드시 닫아야 함
-
-
-
-// 보험 보장 데이터 입력
-insuranceData.forEach((insurance, index) => {
-
-  const column = columns[index];
-
-  for (const key in insurance) {
-
-    const row = rowMap[key];
-
-    if (!row) continue;
-
-    const address = column + row;
-
-    const rawVal =
-      String(insurance[key]);
-
-    // 갱 여부 확인
-    const isRenew =
-      rawVal.includes("갱");
-
-    // 갱 제거
-    const val = rawVal
-      .replace(/\(갱\)/g, "")
-      .replace(/갱/g, "")
-      .trim();
-
-    const cell =
-      sheet.getCell(address);
-
-    const cleanNumber = Number(
-      val.replace(/,/g, "")
-    );
-
-    // 값 입력
-if (
-  val.includes("억") ||
-  isNaN(cleanNumber)
-) {
-
-  cell.value = val;
-
-} else {
-
-  cell.value = cleanNumber;
-
-  // 숫자면 콤마 적용
-  cell.numFmt = '#,##0';
-
-}
-
-    // 갱신형이면 파란색
-    if (isRenew) {
-
-      cell.font = {
-        ...cell.font,
-        color: { argb: "FF00B0F0" }
-      };
-
+        if (val.includes("억") || isNaN(cleanNumber)) {
+          cell.value = val;
+        } else {
+          cell.value = cleanNumber;
+          cell.numFmt = '#,##0';
+        }
+        if (isRenew) cell.font = { color: { argb: "FF00B0F0" } };
+      }
     }
+  });
 
-  }
-
-});
-
-  
-
-// 수식 재계산 강제
-workbook.calcProperties.fullCalcOnLoad = true;
-workbook.calcProperties.forceFullCalc = true;
-
-  // 3. 파일 저장
+  workbook.calcProperties.fullCalcOnLoad = true;
+  workbook.calcProperties.forceFullCalc = true;
   const buffer = await workbook.xlsx.writeBuffer();
-
-const blob = new Blob(
-  [buffer],
-  {
-    type:
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-  }
-);
-
-const link = document.createElement("a");
-
-link.href = URL.createObjectURL(blob);
-
-link.download =
-  `${fileCustomerName}_보장분석.xlsx`;
-
-link.click();
+  const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${fileCustomerName}_보장분석.xlsx`;
+  link.click();
 }
 
 // textarea 자동 높이

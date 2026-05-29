@@ -127,23 +127,29 @@ function parseCoverage(text){
     for (const key in aliases) {
 
   const regex =
-    new RegExp(`${key}\\s*([\\d,]+억?|[\\d,]+)`);
+  new RegExp(`${key}[^\\d]*([\\d,.]+(?:억|천만|백만|만)?(?:원)?)`);
 
   const matched = line.match(regex);
 
-  if (matched) {
+    if (matched) {
 
-    if (!matched[1].includes("억")) {
+      const value = matched[1]
+        .replace(/원/g, "")
+        .trim();
 
-      result[aliases[key]] =
-        Number(
-          matched[1].replace(/,/g, "")
-        ).toLocaleString();
+      if (
+        value.includes("억") ||
+        value.includes("만")
+        ) {
+  
+        result[aliases[key]] = value;
+    
+    } else {
 
-        } else {
-
-      result[aliases[key]] =
-        matched[1];
+            result[aliases[key]] =
+            Number(
+            value.replace(/,/g, "")
+          ).toLocaleString();
         }
       }
     }
@@ -176,9 +182,17 @@ async function generateExcel() {
   }
 
   // 고객 정보 입력
-  XLSX.utils.sheet_add_aoa(sheet, [[customerName]], { origin: 'Q1' });
-  XLSX.utils.sheet_add_aoa(sheet, [[customerAge]], { origin: 'R1' });
-  XLSX.utils.sheet_add_aoa(sheet, [[customerGender]], { origin: 'S1' });
+  if (!sheet["Q1"]) sheet["Q1"] = {};
+  if (!sheet["R1"]) sheet["R1"] = {};
+  if (!sheet["S1"]) sheet["S1"] = {};
+
+sheet["Q1"].v = customerName;
+sheet["R1"].v = customerAge;
+sheet["S1"].v = customerGender;
+
+sheet["Q1"].t = "s";
+sheet["R1"].t = "n";
+sheet["S1"].t = "s";
 
   // 2. 보험 데이터 입력
   // 2칸~9칸 시트의 컬럼 배열을 정의하는 columnMap을 그대로 사용하되, 
@@ -199,17 +213,30 @@ async function generateExcel() {
       const row = rowMap[key];
       if (!row) continue;
       
-      const address = column + row;
-      const val = insurance[key];
+     const address = column + row;
+const val = String(insurance[key]);
 
-      // [핵심] sheet_add_aoa 대신 직접 객체 수정 (병합 서식 보호)
-      if (!sheet[address]) {
-        sheet[address] = { t: 's', v: val };
-      } else {
-        sheet[address].v = val;
-        sheet[address].t = isNaN(val.replace(/,/g, '')) ? 's' : 'n';
+      // 셀없으면 생성
+if (!sheet[address]) {
+  sheet[address] = {};
+}
+
+      // 
+const cleanNumber = Number(
+  val.replace(/,/g, "")
+);
+
+if (
+  val.includes("억") ||
+  isNaN(cleanNumber)
+) {
+  sheet[address].v = val;
+  sheet[address].t = "s";
+} else {
+  sheet[address].v = cleanNumber;
+  sheet[address].t = "n";
+}
       }
-    }
   });
 
   // 3. 파일 저장

@@ -199,6 +199,9 @@ async function generateExcel() {
   const insuranceCount = insuranceData.length;
   const columns = columnMap[`${insuranceCount}칸`];
 
+  console.log("보험개수:", insuranceCount);
+  console.log("사용컬럼:", columns);
+  
   if (!columns) {
     alert("보험 개수는 2~9개까지만 가능합니다.");
     return;
@@ -207,6 +210,14 @@ async function generateExcel() {
   // 통합 루프: 메타데이터 + 보장데이터를 한 번에 처리
   insuranceMetaData.forEach((meta, index) => {
     const column = columns[index];
+
+    // 로그
+    console.log(
+      `보험${index + 1}`,
+      "컬럼:", column,
+      "보험료:", meta.monthlyFee,
+      "상품명:", meta.product
+    );
 
    // 1. 메타 데이터 입력
 sheet.getCell(`${column}3`).value = meta.payPeriod;
@@ -231,6 +242,13 @@ sheet.getCell(`${column}6`).value = meta.joinDate;
 const feeCell = sheet.getCell(`${column}7`);
 feeCell.value = Number(meta.monthlyFee.replace(/[^0-9]/g, ""));
 feeCell.numFmt = '#,##0"원"';
+
+    // 로그
+  console.log(
+  feeCell.address,
+  feeCell.value,
+  feeCell.numFmt
+);
 
 // 스타일 객체를 가져와 수정 후 다시 적용
 let feeStyle = { ...feeCell.style };

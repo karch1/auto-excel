@@ -201,34 +201,35 @@ function parseCoverage(text){
 
   const result = {};
 
+  const aliasKeys = Object.keys(aliases)
+    .sort((a, b) => b.length - a.length);
+
   const lines = text.split("\n");
 
   lines.forEach(line => {
 
     line = line.trim();
 
-    for (const key in aliases) {
+    for (const key of aliasKeys) {
 
-  const regex =
-  new RegExp(`${key}[^\\d]*([\\d,.]+(?:억|천만|백만|만)?(?:원)?)`);
+      const regex =
+        new RegExp(`${key}[^\\d]*([\\d,.]+(?:억|천만|백만|만)?(?:원)?)`);
 
-  const matched = line.match(regex);
+      const matched = line.match(regex);
 
-    if (matched) {
+      if (matched) {
 
-      const value = matched[1]
-        .replace(/원/g, "")
-        .trim();
+        const value = matched[1]
+          .replace(/원/g, "")
+          .trim();
 
-     const rowKey = aliases[key];
+        const rowKey = aliases[key];
 
-if (!result[rowKey]) {
-  result[rowKey] = [];
-}
+        if (!result[rowKey]) {
+          result[rowKey] = [];
+        }
 
-result[rowKey].push(
-  line.replace(/\s+/g, " ").trim()
-);
+        result[rowKey].push(`${key} ${value}`);
       }
     }
   });

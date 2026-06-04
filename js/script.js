@@ -234,6 +234,8 @@ function parseCoverage(text){
     }
   });
 
+  console.log("파싱결과:", result);
+
   return result;
 }
 

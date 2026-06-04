@@ -14,7 +14,7 @@ const aliases = {
 
   "방사선": "antiCancer",
   "약물": "antiCancer",
-  "항암": "antiCancer",
+  // "항암": "antiCancer",
 
   "표적항암": "carT",
   "카티": "carT",

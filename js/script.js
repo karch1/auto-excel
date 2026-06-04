@@ -219,6 +219,15 @@ function parseCoverage(text){
 
       if (matched) {
 
+        console.log(
+    "매칭:",
+    line,
+    "=>",
+    key,
+    "=>",
+    aliases[key]
+  );
+
         const value = matched[1]
           .replace(/원/g, "")
           .trim();
@@ -230,6 +239,8 @@ function parseCoverage(text){
         }
 
         result[rowKey].push(`${key} ${value}`);
+
+         break; 
       }
     }
   });

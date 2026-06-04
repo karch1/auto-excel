@@ -1,66 +1,149 @@
 const aliases = {
 
-  // 일반암
-  "암": "generalCancer",
-  "일반암": "generalCancer",
-  "암진단": "generalCancer",
-  "암진단비": "generalCancer",
+  /* =========================
+     암
+  ========================= */
 
-  // 고액암
   "고액암": "highCancer",
 
-  // 유사암
   "유사암": "smallCancer",
   "소액암": "smallCancer",
 
-  // 재진단
   "재진단암": "recurrenceCancer",
   "전이암": "recurrenceCancer",
 
-  // 항암
-  "항암": "antiCancer",
   "방사선": "antiCancer",
   "약물": "antiCancer",
+  "항암": "antiCancer",
 
-  // 카티
-  "카티": "carT",
   "표적항암": "carT",
+  "카티": "carT",
+  "CAR-T": "carT",
 
-  // 암수술
   "암수술": "cancerSurgery",
 
-  // 뇌
-  "뇌경색": "brainDiagnosis",
-  "뇌출혈": "brainDiagnosis",
+  "암환자": "cancerPatient",
+
+  "암치료": "cancerTreatment",
+
+  "암진단비": "generalCancer",
+  "암진단": "generalCancer",
+  "일반암": "generalCancer",
+  "암": "generalCancer",
+
+  /* =========================
+     뇌
+  ========================= */
+
+  "뇌경색": "brainStroke",
+  "뇌출혈": "brainStroke",
+
   "뇌혈관": "brainBloodVessel",
+  "뇌혈관질환": "brainBloodVessel",
 
-  // 심장
+  "뇌수술": "brainSurgery",
+
+  "뇌진단": "brainDiagnosis",
+
+  /* =========================
+     심장
+  ========================= */
+
   "급성심근경색": "heartAttack",
-  "심혈관": "cardioDiagnosis",
+  "심근경색": "heartAttack",
+
   "허혈성심장질환": "cardioDiagnosis",
+  "심혈관질환": "cardioDiagnosis",
+  "심혈관": "cardioDiagnosis",
 
-  // 수술
-  "질병수술": "diseaseSurgery",
+  "심장수술": "cardioSurgery",
+  "심혈관수술": "cardioSurgery",
+
+  /* =========================
+     수술
+  ========================= */
+
   "상해수술": "accidentSurgery",
+  "질병수술": "diseaseSurgery",
 
-  // 입원
+  /* =========================
+     입원
+  ========================= */
+
+  "상해입원": "accidentHospital",
+
   "입원일당": "diseaseHospital",
+  "질병입원": "diseaseHospital",
 
-  // 실손
+  "1인실": "oneRoom",
+  "다인실": "multiRoom",
+
+  "간병인": "caregiver",
+  "간호간병": "nursingCare",
+
+  /* =========================
+     실손
+  ========================= */
+
+  "상해실손": "actualAccidentIn",
+  "상해통원": "actualAccidentOut",
+
+  "질병실손": "actualDiseaseIn",
+  "질병통원": "actualDiseaseOut",
+
+  "비급여": "nonBenefit",
+
   "실손": "actualDiseaseIn",
 
-  // 골절
+  /* =========================
+     골절
+  ========================= */
+
+  "5대골절수술": "fractureSurgery",
+  "골절수술": "fractureSurgery",
+
+  "5대골절": "fractureDiagnosis",
   "골절": "fractureDiagnosis",
 
-  // 화상
+  "깁스": "castTreatment",
+
+  /* =========================
+     화상
+  ========================= */
+
+  "화상수술": "burnSurgery",
   "화상": "burnDiagnosis",
 
-  // 응급실
-  "응급실": "emergency",
+  /* =========================
+     응급실
+  ========================= */
 
-  // 운전자
+  "비응급": "emergency",
+  "응급실": "emergency",
+  "응급": "emergency",
+
+  /* =========================
+     배상
+  ========================= */
+
+  "배상책임": "liability",
+
+  /* =========================
+     운전자
+  ========================= */
+
+  "교통사고처리지원금": "trafficSupport",
+
   "변호사선임": "lawyerFee",
-  "교통사고처리지원금": "trafficSupport"
+  "변호사선임비": "lawyerFee",
+
+  "면허정지": "licenseSupport",
+  "면허취소": "licenseSupport",
+
+  "벌금": "loanSupport",
+
+  "자동차사고": "carAccident",
+  "교통사고": "carAccident"
 };
 
 const rowMap = {
@@ -137,20 +220,15 @@ function parseCoverage(text){
         .replace(/원/g, "")
         .trim();
 
-      if (
-        value.includes("억") ||
-        value.includes("만")
-        ) {
-  
-        result[aliases[key]] = value;
-    
-    } else {
+     const rowKey = aliases[key];
 
-            result[aliases[key]] =
-            Number(
-            value.replace(/,/g, "")
-          ).toLocaleString();
-        }
+if (!result[rowKey]) {
+  result[rowKey] = [];
+}
+
+result[rowKey].push(
+  line.replace(/\s+/g, " ").trim()
+);
       }
     }
   });
@@ -261,7 +339,9 @@ feeCell.style = feeStyle;
       for (const key in currentInsurance) {
         const row = rowMap[key];
         if (!row) continue;
-        const rawVal = String(currentInsurance[key]);
+        const rawVal = Array.isArray(currentInsurance[key])
+        ? currentInsurance[key].join(" / ")
+        : String(currentInsurance[key]);
         const isRenew = rawVal.includes("갱");
         const val = rawVal.replace(/\(갱\)/g, "").replace(/갱/g, "").trim();
         const cell = sheet.getCell(column + row);

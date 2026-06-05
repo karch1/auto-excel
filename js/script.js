@@ -1,226 +1,78 @@
 const aliases = {
-
-/* =========================
-     사망 (추가)
-  ========================= */
-  "일반사망": "generalDeath",
-  "일반 사망": "generalDeath",
-  "상해사망": "accidentDeath",
-  "상해 사망": "accidentDeath",
-  "질병사망": "diseaseDeath",
-  "질병 사망": "diseaseDeath",
-  "사망": "generalDeath", // 그냥 '사망'이라고만 써도 일반사망으로 인식하게 설정
-
-  /* =========================
-     후유장해
-  ========================= */
-
-     "상해3%": "accidentDisability", 
-     "상해후유장해": "accidentDisability", 
-     "상휴": "accidentDisability", 
-     "질병3%": "diseaseDisability",
-     "질병후유장해": "diseaseDisability",
-     "질휴": "diseaseDisability",
+/* ==========================================================================
+   보험 항목 매칭 및 엑셀 행 번호 설정 (최종본)
+   ========================================================================== */
      
-  /* =========================
-     암
-  ========================= */
-  "고액암": "highCancer",
-  "유사암": "smallCancer",
-  "소액암": "smallCancer",
-  "재진단암": "recurrenceCancer",
-  "전이암": "recurrenceCancer",
-  "방사선": "antiCancer",
-  "약물": "antiCancer",
-  "표적항암": "carT",
-  "카티": "carT",
-  "CAR-T": "carT",
-  "암수술": "cancerSurgery",
-  "암환자": "cancerPatient",
-  "암치료": "cancerTreatment",
-  "암진단비": "generalCancer",
-  "일반암": "generalCancer",
+  /* [사망] */
+  "일반사망": "generalDeath", "일반 사망": "generalDeath", "사망": "generalDeath",
+  "상해사망": "accidentDeath", "상해 사망": "accidentDeath",
+  "질병사망": "diseaseDeath", "질병 사망": "diseaseDeath",
   
- /* =========================
-     뇌 (엑셀 행 순서에 맞게 완벽 정렬)
-  ========================= */
-  "뇌졸중진단": "brainMid",
-  "뇌졸중": "brainMid",
+  /* [후유장해] */
+  "상휴": "accidentDisability", "상해후유장해": "accidentDisability",
+  "질휴": "diseaseDisability", "질병후유장해": "diseaseDisability",
+
+  /* [암] */
+  "고액암": "highCancer", "일반암": "generalCancer", "암진단비": "generalCancer",
+  "유사암": "smallCancer", "소액암": "smallCancer",
+  "재진단암": "recurrenceCancer", "전이암": "recurrenceCancer",
+  "방사선": "antiCancer", "약물": "antiCancer",
+  "표적항암": "carT", "카티": "carT", "CAR-T": "carT",
+  "암수술": "cancerSurgery", "암환자": "cancerPatient", "암치료": "cancerTreatment",
   
-  "뇌혈관질환진단": "brainDiagnosis",
-  "뇌혈관진단": "brainDiagnosis",
-  "뇌혈관질환수술": "brainSurgery",
-  "뇌혈관수술": "brainSurgery",
-  "뇌혈관질환": "brainDiagnosis",
-  "뇌혈관": "brainDiagnosis",
-  
-  "뇌경색진단": "brainStroke",
-  "뇌출혈진단": "brainStroke",
-  "뇌경색": "brainStroke",
-  "뇌출혈": "brainStroke",
-  
-  "뇌수술": "brainSurgery",
-  "뇌진단": "brainDiagnosis",
+  /* [뇌] */
+  "뇌경색": "brainStroke", "뇌출혈": "brainStroke", "뇌경색진단": "brainStroke", "뇌출혈진단": "brainStroke",
+  "뇌졸중": "brainMid", "뇌졸중진단": "brainMid",
+  "뇌혈관질환": "brainDiagnosis", "뇌혈관": "brainDiagnosis", "뇌혈관질환진단": "brainDiagnosis", "뇌혈관진단": "brainDiagnosis", "뇌진단": "brainDiagnosis",
+  "뇌혈관질환수술": "brainSurgery", "뇌혈관수술": "brainSurgery", "뇌수술": "brainSurgery",
 
-  /* =========================
-     심장
-  ========================= */
-  "급성심근경색": "heartAttack",
-  "심근경색": "heartAttack",
-  "허혈성심장질환": "cardioDiagnosis",
-  "심혈관질환": "cardioDiagnosis",
-  "심혈관": "cardioDiagnosis",
-  "심장수술": "cardioSurgery",
-  "심혈관수술": "cardioSurgery",
+  /* [심장] */
+  "급성심근경색": "heartAttack", "심근경색": "heartAttack",
+  "허혈성심장질환": "cardioDiagnosis", "심혈관질환": "cardioDiagnosis", "심혈관": "cardioDiagnosis",
+  "심장수술": "cardioSurgery", "심혈관수술": "cardioSurgery",
 
-  /* =========================
-     수술
-  ========================= */
-  // 1~8종
-  "상해1~8종수술": "accidentSurgeryGrade",
-  "질병1~8종수술": "diseaseSurgeryGrade",
-  "상해1~8종": "accidentSurgeryGrade",
-  "질병1~8종": "diseaseSurgeryGrade",
+  /* [수술/입원/기타] */
+  "상해1~8종수술": "accidentSurgeryGrade", "질병1~8종수술": "diseaseSurgeryGrade",
+  "상해1~5종수술": "accidentSurgeryGrade", "질병1~5종수술": "diseaseSurgeryGrade",
+  "상해종수술": "accidentSurgeryGrade", "질병종수술": "diseaseSurgeryGrade", "종수술": "diseaseSurgeryGrade", 
+  "상해수술": "accidentSurgery", "질병수술": "diseaseSurgery",
+  "N대수술": "majorSurgery", "대수술": "majorSurgery",
+  "상해입원": "accidentHospital", "질병입원": "diseaseHospital", "입원일당": "diseaseHospital",
+  "간병인": "caregiver", "간호간병": "nursingCare",
 
-  // 1~5종
-  "상해1~5종 수술": "accidentSurgeryGrade",
-  "질병1~5종 수술": "diseaseSurgeryGrade",
-  "상해1~5종수술": "accidentSurgeryGrade",
-  "질병1~5종수술": "diseaseSurgeryGrade",
-  "상해1~5종": "accidentSurgeryGrade",
-  "질병1~5종": "diseaseSurgeryGrade",
-
-  // 1~3종
-  "상해1~3종수술": "accidentSurgeryGrade",
-  "질병1~3종수술": "diseaseSurgeryGrade",
-  "상해1~3종": "accidentSurgeryGrade",
-  "질병1~3종": "diseaseSurgeryGrade",
-
-  // 종수술 기본
-  "상해종수술": "accidentSurgeryGrade",
-  "질병종수술": "diseaseSurgeryGrade",
-  "종수술": "diseaseSurgeryGrade", 
-
-  // 일반 수술
-  "상해수술": "accidentSurgery",
-  "질병수술": "diseaseSurgery",
-
-  // N대 수술 (rowMap의 majorSurgery: 35행으로 연결)
-  "N대수술": "majorSurgery",
-  "대수술": "majorSurgery",
-
-  /* =========================
-     입원
-  ========================= */
-  "상해입원": "accidentHospital",
-  "입원일당": "diseaseHospital",
-  "질병입원": "diseaseHospital",
-  "1인실": "oneRoom",
-  "1인": "oneRoom",
-  "2~3인실": "multiRoom",
-  "2~3인": "multiRoom",
-  "간병인": "caregiver",
-  "간호간병": "nursingCare",
-  "간통": "nursingCare",
-
-  /* =========================
-     실손
-  ========================= */
-  "상해실손": "actualAccidentIn",
-  "상해통원": "actualAccidentOut",
-  "질병실손": "actualDiseaseIn",
-  "질병통원": "actualDiseaseOut",
-  "비급여": "nonBenefit",
-  "실손": "actualDiseaseIn",
-
-  /* =========================
-     골절
-  ========================= */
-  "5대골절수술": "fractureSurgery",
-  "골절수술": "fractureSurgery",
-  "5대골절": "fractureDiagnosis",
-  "골절": "fractureDiagnosis",
-  "깁스": "castTreatment",
-
-  /* =========================
-     화상
-  ========================= */
-  "화상수술": "burnSurgery",
-  "화상": "burnDiagnosis",
-
-  /* =========================
-     응급실
-  ========================= */
-  "비응급": "emergency",
-  "응급실": "emergency",
-  "응급": "emergency",
-
-  /* =========================
-     배상
-  ========================= */
-  "배상책임": "liability",
-  "일배책": "liability",
-
-  /* =========================
-     운전자 (수정된 버전)
-  ========================= */
-  "교통사고처리지원금": "trafficSupport",
-  "교사처": "trafficSupport",
-  "변호사선임": "lawyerFee",
-  "변호사": "lawyerFee",
-  "변호사선임비": "lawyerFee",
-  "대인보상": "licenseSupport", // 면허정지/취소 대신 대인보상
-  "대인": "licenseSupport",
-  "대물보상": "loanSupport",    // 벌금 대신 대물보상 (아래 rowMap 맞춤)
-  "대물": "loanSupport",
-  "자동차사고부상위로금": "carAccident",
-  "자부상": "carAccident",       // 줄임말도 추가
-  "자동차사고부상": "carAccident"
+  /* [운전자] */
+  "교통사고처리지원금": "trafficSupport", "교사처": "trafficSupport",
+  "변호사선임": "lawyerFee", "변호사": "lawyerFee", "변호사선임비": "lawyerFee",
+  "대인보상": "licenseSupport", "대인": "licenseSupport",
+  "대물보상": "loanSupport", "대물": "loanSupport",
+  "자동차사고부상위로금": "carAccident", "자부상": "carAccident", "자동차사고부상": "carAccident"
 };
 
 const rowMap = {
     // 1. 사망 (8~10행)
-    generalDeath: 8, 
-    accidentDeath: 9, 
-    diseaseDeath: 10,
+    generalDeath: 8, accidentDeath: 9, diseaseDeath: 10,
     // 2. 후유장해 (11~12행)
     accidentDisability: 11, diseaseDisability: 12,
-    // 3. 3대 진단·수술 (암 13~21, 뇌 22~25, 심장 26~28)
+    // 3. 암 (13~21행)
     highCancer: 13, generalCancer: 14, smallCancer: 15, recurrenceCancer: 16,
     antiCancer: 17, cancerSurgery: 18, cancerPatient: 19, carT: 20, cancerTreatment: 21,
-    
-    //  엑셀 템플릿 행 번호와 완벽하게 일치시킴
-    brainStroke: 22,      // 22행: 뇌경색 / 뇌출혈 진단
-    brainMid: 23,         // 23행: 뇌졸중 진단
-    brainDiagnosis: 24,   // 24행: 뇌혈관 진단
-    brainSurgery: 25,     // 25행: 뇌혈관 수술
-    
+    // 4. 뇌 (22~25행)
+    brainStroke: 22, brainMid: 23, brainDiagnosis: 24, brainSurgery: 25,
+    // 5. 심장 (26~28행)
     heartAttack: 26, cardioDiagnosis: 27, cardioSurgery: 28,
-    // 4. 산정특례 (29~30행)
+    // 6. 산정특례 (29~30행)
     specialCaseOnce: 29, specialCaseYear: 30,
-    // 5. 수술 (상해 31~32, 질병 33~36)
+    // 7. 수술 (31~35행)
     accidentSurgery: 31, accidentSurgeryGrade: 32,
     diseaseSurgery: 33, diseaseSurgeryGrade: 34, majorSurgery: 35,
-    // 6. 입원일당 (37~42행)
-    accidentHospital: 37, diseaseHospital: 38, oneRoom: 39, 
-    multiRoom: 40, caregiver: 41, nursingCare: 42,
-    // 7. 실손의료비 (43~47행)
-    actualAccidentIn: 43, actualAccidentOut: 44, 
-    actualDiseaseIn: 45, actualDiseaseOut: 46, nonBenefit: 47,
-    // 8. 골절 (48~50행)
-    fractureDiagnosis: 48, fractureSurgery: 49, castTreatment: 50,
-    // 9. 화상 (51~52행)
-    burnDiagnosis: 51, burnSurgery: 52,
-    // 10. 응급실 (53행)
-    emergency: 53,
-    // 11. 배상 (54행)
-    liability: 54,
-    // 12. 운전자보험 (55~60행)
-    trafficSupport: 55, // 교통사고처리지원금
-    lawyerFee: 56,      // 변호사선임비
-    licenseSupport: 57, // 대인보상
-    loanSupport: 58,    // 대물보상
-    carAccident: 59     // 자동차사고부상위로금
+    // 8. 입원 (37~42행)
+    accidentHospital: 37, diseaseHospital: 38, oneRoom: 39, multiRoom: 40, caregiver: 41, nursingCare: 42,
+    // 9. 실손 (43~47행)
+    actualAccidentIn: 43, actualAccidentOut: 44, actualDiseaseIn: 45, actualDiseaseOut: 46, nonBenefit: 47,
+    // 10. 골절/화상/응급/배상 (48~54행)
+    fractureDiagnosis: 48, fractureSurgery: 49, castTreatment: 50, burnDiagnosis: 51, burnSurgery: 52, emergency: 53, liability: 54,
+    // 11. 운전자 (55~59행)
+    trafficSupport: 55, lawyerFee: 56, licenseSupport: 57, loanSupport: 58, carAccident: 59
 };
 
 const columnMap = {

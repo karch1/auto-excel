@@ -10,7 +10,18 @@ const aliases = {
   "질병사망": "diseaseDeath",
   "질병 사망": "diseaseDeath",
   "사망": "generalDeath", // 그냥 '사망'이라고만 써도 일반사망으로 인식하게 설정
-  
+
+  /* =========================
+     후유장해
+  ========================= */
+
+     "상해3%": "accidentDisability", 
+     "상해후유장해": "accidentDisability", 
+     "상휴": "accidentDisability", 
+     "질병3%": "diseaseDisability",
+     "질병후유장해": "diseaseDisability",
+     "질휴": "diseaseDisability",
+     
   /* =========================
      암
   ========================= */

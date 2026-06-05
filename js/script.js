@@ -105,9 +105,12 @@ const aliases = {
   "입원일당": "diseaseHospital",
   "질병입원": "diseaseHospital",
   "1인실": "oneRoom",
-  "다인실": "multiRoom",
+  "1인": "oneRoom",
+  "2~3인실": "multiRoom",
+  "2~3인": "multiRoom",
   "간병인": "caregiver",
   "간호간병": "nursingCare",
+  "간통": "nursingCare",
 
   /* =========================
      실손
@@ -145,18 +148,23 @@ const aliases = {
      배상
   ========================= */
   "배상책임": "liability",
+  "일배책": "liability",
 
   /* =========================
-     운전자
+     운전자 (수정된 버전)
   ========================= */
   "교통사고처리지원금": "trafficSupport",
+  "교사처": "trafficSupport",
   "변호사선임": "lawyerFee",
+  "변호사": "lawyerFee",
   "변호사선임비": "lawyerFee",
-  "면허정지": "licenseSupport",
-  "면허취소": "licenseSupport",
-  "벌금": "loanSupport",
-  "자동차사고": "carAccident",
-  "교통사고": "carAccident"
+  "대인보상": "licenseSupport", // 면허정지/취소 대신 대인보상
+  "대인": "licenseSupport",
+  "대물보상": "loanSupport",    // 벌금 대신 대물보상 (아래 rowMap 맞춤)
+  "대물": "loanSupport",
+  "자동차사고부상위로금": "carAccident",
+  "자부상": "carAccident",       // 줄임말도 추가
+  "자동차사고부상": "carAccident"
 };
 
 const rowMap = {
@@ -197,8 +205,11 @@ const rowMap = {
     // 11. 배상 (54행)
     liability: 54,
     // 12. 운전자보험 (55~60행)
-    trafficSupport: 55, lawyerFee: 56, licenseSupport: 57, 
-    loanSupport: 58, carAccident: 59
+    trafficSupport: 55, // 교통사고처리지원금
+    lawyerFee: 56,      // 변호사선임비
+    licenseSupport: 57, // 대인보상
+    loanSupport: 58,    // 대물보상
+    carAccident: 59     // 자동차사고부상위로금
 };
 
 const columnMap = {

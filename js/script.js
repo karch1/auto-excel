@@ -27,10 +27,8 @@ const aliases = {
   "암치료": "cancerTreatment",
 
   "암진단비": "generalCancer",
-  "암진단": "generalCancer",
   "일반암": "generalCancer",
-  "암": "generalCancer",
-
+  
   /* =========================
      뇌
   ========================= */

@@ -1,5 +1,16 @@
 const aliases = {
 
+/* =========================
+     사망 (추가)
+  ========================= */
+  "일반사망": "generalDeath",
+  "일반 사망": "generalDeath",
+  "상해사망": "accidentDeath",
+  "상해 사망": "accidentDeath",
+  "질병사망": "diseaseDeath",
+  "질병 사망": "diseaseDeath",
+  "사망": "generalDeath", // 그냥 '사망'이라고만 써도 일반사망으로 인식하게 설정
+  
   /* =========================
      암
   ========================= */
@@ -19,18 +30,24 @@ const aliases = {
   "암진단비": "generalCancer",
   "일반암": "generalCancer",
   
-  /* =========================
-     뇌 (구체적인 진단/수술 키워드 추가)
+ /* =========================
+     뇌 (엑셀 행 순서에 맞게 완벽 정렬)
   ========================= */
+  "뇌졸중진단": "brainMid",
+  "뇌졸중": "brainMid",
+  
   "뇌혈관질환진단": "brainDiagnosis",
   "뇌혈관진단": "brainDiagnosis",
   "뇌혈관질환수술": "brainSurgery",
   "뇌혈관수술": "brainSurgery",
+  "뇌혈관질환": "brainDiagnosis",
+  "뇌혈관": "brainDiagnosis",
   
+  "뇌경색진단": "brainStroke",
+  "뇌출혈진단": "brainStroke",
   "뇌경색": "brainStroke",
   "뇌출혈": "brainStroke",
-  "뇌혈관질환": "brainBloodVessel",
-  "뇌혈관": "brainBloodVessel",
+  
   "뇌수술": "brainSurgery",
   "뇌진단": "brainDiagnosis",
 
@@ -144,13 +161,21 @@ const aliases = {
 
 const rowMap = {
     // 1. 사망 (8~10행)
-    generalDeath: 8, accidentDeath: 9, diseaseDeath: 10,
+    generalDeath: 8, 
+    accidentDeath: 9, 
+    diseaseDeath: 10,
     // 2. 후유장해 (11~12행)
     accidentDisability: 11, diseaseDisability: 12,
     // 3. 3대 진단·수술 (암 13~21, 뇌 22~25, 심장 26~28)
     highCancer: 13, generalCancer: 14, smallCancer: 15, recurrenceCancer: 16,
     antiCancer: 17, cancerSurgery: 18, cancerPatient: 19, carT: 20, cancerTreatment: 21,
-    brainDiagnosis: 22, brainStroke: 23, brainBloodVessel: 24, brainSurgery: 25,
+    
+    //  엑셀 템플릿 행 번호와 완벽하게 일치시킴
+    brainStroke: 22,      // 22행: 뇌경색 / 뇌출혈 진단
+    brainMid: 23,         // 23행: 뇌졸중 진단
+    brainDiagnosis: 24,   // 24행: 뇌혈관 진단
+    brainSurgery: 25,     // 25행: 뇌혈관 수술
+    
     heartAttack: 26, cardioDiagnosis: 27, cardioSurgery: 28,
     // 4. 산정특례 (29~30행)
     specialCaseOnce: 29, specialCaseYear: 30,
@@ -204,7 +229,7 @@ function parseCoverage(text){
 
     for (const key of aliasKeys) {
       // / 와 띄어쓰기로 이어진 다중 금액(예: 20/30/50...)을 모두 잡아내도록 정규식 업그레이드
-      const regex = new RegExp(`${key}[^\\d]*((?:[\\d,.]+(?:억|천만|백만|만)?(?:원)?(?:\\s*[\\/\\~\\-]\\s*)?)+)`);
+      const regex = new RegExp(`${key}\\s*[^\\d]*((?:[\\d,.]+(?:억|천만|백만|만)?(?:원)?(?:\\s*[\\/\\~\\-]\\s*)?)+)`);
       const matched = line.match(regex);
 
       if (matched) {

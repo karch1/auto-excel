@@ -236,7 +236,10 @@ function parseCoverage(text){
           result[rowKey] = [];
         }
 
-        result[rowKey].push(`${key} ${value}`);
+        // 문자열 형태로 저장하던 부분을 지움
+        // result[rowKey].push(`${key} ${value}`);
+        // 이름과 값을 객체 형태로 분리해서 저장합니다.
+        result[rowKey].push({ name: key, val: value });
 
          break; 
       }
@@ -345,15 +348,28 @@ let feeStyle = { ...feeCell.style };
 feeStyle.font = { ...feeStyle.font, color: { argb: "FFFF0000" }, name: 'Arial', size: 11 };
 feeStyle.alignment = { ...feeStyle.alignment, vertical: 'middle', horizontal: 'center' };
 feeCell.style = feeStyle;
+    
     // 2. 보장 데이터 입력
     const currentInsurance = insuranceData[index];
     if (currentInsurance) {
       for (const key in currentInsurance) {
         const row = rowMap[key];
         if (!row) continue;
-        const rawVal = Array.isArray(currentInsurance[key])
-        ? currentInsurance[key].join(" / ")
-        : String(currentInsurance[key]);
+        // const rawVal = Array.isArray(currentInsurance[key])
+        // ? currentInsurance[key].join(" / ")
+        // : String(currentInsurance[key]);
+        
+       // 개수에 따라 출력 방식을 다르게 처리합니다.
+        const items = currentInsurance[key];
+        let rawVal = "";
+
+        if (items.length === 1) {
+          // 매칭된 항목이 1개일 때는 항목 이름을 빼고 값(숫자)만 가져옴
+          rawVal = String(items[0].val);
+        } else {
+          // 2개 이상일 때는 기존처럼 이름과 값을 붙이고 " / " 로 연결
+          rawVal = items.map(item => `${item.name} ${item.val}`).join(" / ");
+        }
         const isRenew = rawVal.includes("갱");
         const val = rawVal.replace(/\(갱\)/g, "").replace(/갱/g, "").trim();
         const cell = sheet.getCell(column + row);

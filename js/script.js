@@ -3,119 +3,123 @@ const aliases = {
   /* =========================
      암
   ========================= */
-
   "고액암": "highCancer",
-
   "유사암": "smallCancer",
   "소액암": "smallCancer",
-
   "재진단암": "recurrenceCancer",
   "전이암": "recurrenceCancer",
-
   "방사선": "antiCancer",
   "약물": "antiCancer",
-  // "항암": "antiCancer",
-
   "표적항암": "carT",
   "카티": "carT",
   "CAR-T": "carT",
-
   "암수술": "cancerSurgery",
-
   "암환자": "cancerPatient",
-
   "암치료": "cancerTreatment",
-
   "암진단비": "generalCancer",
   "일반암": "generalCancer",
   
   /* =========================
-     뇌
+     뇌 (구체적인 진단/수술 키워드 추가)
   ========================= */
-
+  "뇌혈관질환진단": "brainDiagnosis",
+  "뇌혈관진단": "brainDiagnosis",
+  "뇌혈관질환수술": "brainSurgery",
+  "뇌혈관수술": "brainSurgery",
+  
   "뇌경색": "brainStroke",
   "뇌출혈": "brainStroke",
-
-  "뇌혈관": "brainBloodVessel",
   "뇌혈관질환": "brainBloodVessel",
-
+  "뇌혈관": "brainBloodVessel",
   "뇌수술": "brainSurgery",
-
   "뇌진단": "brainDiagnosis",
 
   /* =========================
      심장
   ========================= */
-
   "급성심근경색": "heartAttack",
   "심근경색": "heartAttack",
-
   "허혈성심장질환": "cardioDiagnosis",
   "심혈관질환": "cardioDiagnosis",
   "심혈관": "cardioDiagnosis",
-
   "심장수술": "cardioSurgery",
   "심혈관수술": "cardioSurgery",
 
   /* =========================
      수술
   ========================= */
+  // 1~8종
+  "상해1~8종수술": "accidentSurgeryGrade",
+  "질병1~8종수술": "diseaseSurgeryGrade",
+  "상해1~8종": "accidentSurgeryGrade",
+  "질병1~8종": "diseaseSurgeryGrade",
 
+  // 1~5종
+  "상해1~5종 수술": "accidentSurgeryGrade",
+  "질병1~5종 수술": "diseaseSurgeryGrade",
+  "상해1~5종수술": "accidentSurgeryGrade",
+  "질병1~5종수술": "diseaseSurgeryGrade",
+  "상해1~5종": "accidentSurgeryGrade",
+  "질병1~5종": "diseaseSurgeryGrade",
+
+  // 1~3종
+  "상해1~3종수술": "accidentSurgeryGrade",
+  "질병1~3종수술": "diseaseSurgeryGrade",
+  "상해1~3종": "accidentSurgeryGrade",
+  "질병1~3종": "diseaseSurgeryGrade",
+
+  // 종수술 기본
+  "상해종수술": "accidentSurgeryGrade",
+  "질병종수술": "diseaseSurgeryGrade",
+  "종수술": "diseaseSurgeryGrade", 
+
+  // 일반 수술
   "상해수술": "accidentSurgery",
   "질병수술": "diseaseSurgery",
+
+  // N대 수술 (rowMap의 majorSurgery: 35행으로 연결)
+  "N대수술": "majorSurgery",
+  "대수술": "majorSurgery",
 
   /* =========================
      입원
   ========================= */
-
   "상해입원": "accidentHospital",
-
   "입원일당": "diseaseHospital",
   "질병입원": "diseaseHospital",
-
   "1인실": "oneRoom",
   "다인실": "multiRoom",
-
   "간병인": "caregiver",
   "간호간병": "nursingCare",
 
   /* =========================
      실손
   ========================= */
-
   "상해실손": "actualAccidentIn",
   "상해통원": "actualAccidentOut",
-
   "질병실손": "actualDiseaseIn",
   "질병통원": "actualDiseaseOut",
-
   "비급여": "nonBenefit",
-
   "실손": "actualDiseaseIn",
 
   /* =========================
      골절
   ========================= */
-
   "5대골절수술": "fractureSurgery",
   "골절수술": "fractureSurgery",
-
   "5대골절": "fractureDiagnosis",
   "골절": "fractureDiagnosis",
-
   "깁스": "castTreatment",
 
   /* =========================
      화상
   ========================= */
-
   "화상수술": "burnSurgery",
   "화상": "burnDiagnosis",
 
   /* =========================
      응급실
   ========================= */
-
   "비응급": "emergency",
   "응급실": "emergency",
   "응급": "emergency",
@@ -123,23 +127,17 @@ const aliases = {
   /* =========================
      배상
   ========================= */
-
   "배상책임": "liability",
 
   /* =========================
      운전자
   ========================= */
-
   "교통사고처리지원금": "trafficSupport",
-
   "변호사선임": "lawyerFee",
   "변호사선임비": "lawyerFee",
-
   "면허정지": "licenseSupport",
   "면허취소": "licenseSupport",
-
   "벌금": "loanSupport",
-
   "자동차사고": "carAccident",
   "교통사고": "carAccident"
 };
@@ -179,7 +177,6 @@ const rowMap = {
 };
 
 const columnMap = {
-
   "2칸": ["F","G"],
   "3칸": ["F","G","H"],
   "4칸": ["F","G","H","I"],
@@ -188,7 +185,6 @@ const columnMap = {
   "7칸": ["F","G","H","I","J","K","L"],
   "8칸": ["F","G","H","I","J","K","L","M"],
   "9칸": ["F","G","H","I","J","K","L","M","N"]
-
 };
 
 document
@@ -196,7 +192,6 @@ document
   .addEventListener("click", generateExcel);
 
 function parseCoverage(text){
-
   const result = {};
 
   const aliasKeys = Object.keys(aliases)
@@ -205,40 +200,23 @@ function parseCoverage(text){
   const lines = text.split("\n");
 
   lines.forEach(line => {
-
     line = line.trim();
 
     for (const key of aliasKeys) {
-
-      const regex =
-        new RegExp(`${key}[^\\d]*([\\d,.]+(?:억|천만|백만|만)?(?:원)?)`);
-
+      // / 와 띄어쓰기로 이어진 다중 금액(예: 20/30/50...)을 모두 잡아내도록 정규식 업그레이드
+      const regex = new RegExp(`${key}[^\\d]*((?:[\\d,.]+(?:억|천만|백만|만)?(?:원)?(?:\\s*[\\/\\~\\-]\\s*)?)+)`);
       const matched = line.match(regex);
 
       if (matched) {
+        console.log("매칭:", line, "=>", key, "=>", aliases[key]);
 
-        console.log(
-    "매칭:",
-    line,
-    "=>",
-    key,
-    "=>",
-    aliases[key]
-  );
-
-        const value = matched[1]
-          .replace(/원/g, "")
-          .trim();
-
+        const value = matched[1].replace(/원/g, "").trim();
         const rowKey = aliases[key];
 
         if (!result[rowKey]) {
           result[rowKey] = [];
         }
 
-        // 문자열 형태로 저장하던 부분을 지움
-        // result[rowKey].push(`${key} ${value}`);
-        // 이름과 값을 객체 형태로 분리해서 저장합니다.
         result[rowKey].push({ name: key, val: value });
 
          break; 
@@ -247,7 +225,6 @@ function parseCoverage(text){
   });
 
   console.log("파싱결과:", result);
-
   return result;
 }
 
@@ -304,50 +281,38 @@ async function generateExcel() {
   insuranceMetaData.forEach((meta, index) => {
     const column = columns[index];
 
-    // 로그
-    console.log(
-      `보험${index + 1}`,
-      "컬럼:", column,
-      "보험료:", meta.monthlyFee,
-      "상품명:", meta.product
-    );
+    console.log(`보험${index + 1}`, "컬럼:", column, "보험료:", meta.monthlyFee, "상품명:", meta.product);
 
-   // 1. 메타 데이터 입력
-sheet.getCell(`${column}3`).value = meta.payPeriod;
-sheet.getCell(`${column}4`).value = meta.company;
+    // 1. 메타 데이터 입력
+    sheet.getCell(`${column}3`).value = meta.payPeriod;
+    sheet.getCell(`${column}4`).value = meta.company;
 
-// 상품명 셀
-const productCell = sheet.getCell(`${column}5`);
-const isRenewProduct = meta.product.includes("갱");
-productCell.value = meta.product.replace(/\(갱\)/g, "").replace(/갱/g, "").trim();
+    // 상품명 셀
+    const productCell = sheet.getCell(`${column}5`);
+    const isRenewProduct = meta.product.includes("갱");
+    productCell.value = meta.product.replace(/\(갱\)/g, "").replace(/갱/g, "").trim();
 
-// 스타일 객체를 가져와 수정 후 다시 적용 (기존 정렬 유지)
-let productStyle = { ...productCell.style };
-productStyle.alignment = { ...productStyle.alignment, shrinkToFit: true, vertical: 'middle', horizontal: 'center' };
-if (isRenewProduct) {
-    productStyle.font = { ...productStyle.font, color: { argb: "FF00B0F0" } };
-}
-productCell.style = productStyle;
+    // 스타일 객체
+    let productStyle = { ...productCell.style };
+    productStyle.alignment = { ...productStyle.alignment, shrinkToFit: true, vertical: 'middle', horizontal: 'center' };
+    if (isRenewProduct) {
+        productStyle.font = { ...productStyle.font, color: { argb: "FF00B0F0" } };
+    }
+    productCell.style = productStyle;
 
-sheet.getCell(`${column}6`).value = meta.joinDate;
+    sheet.getCell(`${column}6`).value = meta.joinDate;
 
-// 납입보험료 셀
-const feeCell = sheet.getCell(`${column}7`);
-feeCell.value = Number(meta.monthlyFee.replace(/[^0-9]/g, ""));
-feeCell.numFmt = '#,##0"원"';
+    // 납입보험료 셀
+    const feeCell = sheet.getCell(`${column}7`);
+    feeCell.value = Number(meta.monthlyFee.replace(/[^0-9]/g, ""));
+    feeCell.numFmt = '#,##0"원"';
 
-    // 로그
-  console.log(
-  feeCell.address,
-  feeCell.value,
-  feeCell.numFmt
-);
+    console.log(feeCell.address, feeCell.value, feeCell.numFmt);
 
-// 스타일 객체를 가져와 수정 후 다시 적용
-let feeStyle = { ...feeCell.style };
-feeStyle.font = { ...feeStyle.font, color: { argb: "FFFF0000" }, name: 'Arial', size: 11 };
-feeStyle.alignment = { ...feeStyle.alignment, vertical: 'middle', horizontal: 'center' };
-feeCell.style = feeStyle;
+    let feeStyle = { ...feeCell.style };
+    feeStyle.font = { ...feeStyle.font, color: { argb: "FFFF0000" }, name: 'Arial', size: 11 };
+    feeStyle.alignment = { ...feeStyle.alignment, vertical: 'middle', horizontal: 'center' };
+    feeCell.style = feeStyle;
     
     // 2. 보장 데이터 입력
     const currentInsurance = insuranceData[index];
@@ -355,21 +320,17 @@ feeCell.style = feeStyle;
       for (const key in currentInsurance) {
         const row = rowMap[key];
         if (!row) continue;
-        // const rawVal = Array.isArray(currentInsurance[key])
-        // ? currentInsurance[key].join(" / ")
-        // : String(currentInsurance[key]);
         
-       // 개수에 따라 출력 방식을 다르게 처리합니다.
         const items = currentInsurance[key];
         let rawVal = "";
 
+        // 개수에 따라 출력 방식을 다르게 처리
         if (items.length === 1) {
-          // 매칭된 항목이 1개일 때는 항목 이름을 빼고 값(숫자)만 가져옴
           rawVal = String(items[0].val);
         } else {
-          // 2개 이상일 때는 기존처럼 이름과 값을 붙이고 " / " 로 연결
           rawVal = items.map(item => `${item.name} ${item.val}`).join(" / ");
         }
+
         const isRenew = rawVal.includes("갱");
         const val = rawVal.replace(/\(갱\)/g, "").replace(/갱/g, "").trim();
         const cell = sheet.getCell(column + row);
@@ -398,66 +359,34 @@ feeCell.style = feeStyle;
 
 // textarea 자동 높이
 document.querySelectorAll("textarea").forEach(textarea => {
-
-  // 최초 실행
   textarea.style.height = "auto";
   textarea.style.height = textarea.scrollHeight + "px";
 
-  // 입력 시 자동 증가
   textarea.addEventListener("input", () => {
-
     textarea.style.height = "auto";
     textarea.style.height = textarea.scrollHeight + "px";
-
   });
-
 });
 
+// 자동 포맷 로직
 for (let i = 1; i <= 8; i++) {
-
-  // 가입연도 자동 포맷
-  const joinDateInput =
-  document.getElementById(`joinDate${i}`);
-
+  const joinDateInput = document.getElementById(`joinDate${i}`);
   joinDateInput.addEventListener("input", e => {
-
-    let value =
-    e.target.value.replace(/[^0-9]/g, "");
-
-    if (value.length > 8) {
-      value = value.slice(0, 8);
-    }
-
+    let value = e.target.value.replace(/[^0-9]/g, "");
+    if (value.length > 8) value = value.slice(0, 8);
     if (value.length >= 5) {
-
-      value =
-        value.slice(0,4) + "." +
-        value.slice(4,6) + "." +
-        value.slice(6,8);
-
+      value = value.slice(0,4) + "." + value.slice(4,6) + "." + value.slice(6,8);
     }
-
     e.target.value = value;
-
   });
 
-  // 납입보험료 자동 포맷
-  const monthlyFeeInput =
-  document.getElementById(`monthlyFee${i}`);
-
+  const monthlyFeeInput = document.getElementById(`monthlyFee${i}`);
   monthlyFeeInput.addEventListener("input", e => {
-
-    let value =
-    e.target.value.replace(/[^0-9]/g, "");
-
+    let value = e.target.value.replace(/[^0-9]/g, "");
     if (!value) {
       e.target.value = "";
       return;
     }
-
-    e.target.value =
-      Number(value).toLocaleString() + "원";
-
+    e.target.value = Number(value).toLocaleString() + "원";
   });
-
 }

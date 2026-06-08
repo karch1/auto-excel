@@ -23,7 +23,8 @@ const aliases = {
   /* [뇌] */
   "뇌경색": "brainStroke", "뇌출혈": "brainStroke", "뇌경색진단": "brainStroke", "뇌출혈진단": "brainStroke",
   "뇌졸중": "brainMid", "뇌졸중진단": "brainMid",
-  "뇌혈관질환": "brainDiagnosis", "뇌혈관": "brainDiagnosis", "뇌혈관질환진단": "brainDiagnosis", "뇌혈관진단": "brainDiagnosis", "뇌진단": "brainDiagnosis",
+  "뇌혈관질환": "brainDiagnosis", "뇌혈관": "brainDiagnosis", "뇌혈관질환진단": "brainDiagnosis", 
+  "뇌혈관진단": "brainDiagnosis", "뇌진단": "brainDiagnosis",
   "뇌혈관질환수술": "brainSurgery", "뇌혈관수술": "brainSurgery", "뇌수술": "brainSurgery",
 
   /* [심장] */
@@ -38,8 +39,20 @@ const aliases = {
   "상해수술": "accidentSurgery", "질병수술": "diseaseSurgery",
   "N대수술": "majorSurgery", "대수술": "majorSurgery",
   "상해입원": "accidentHospital", "질병입원": "diseaseHospital", "입원일당": "diseaseHospital",
-  "간병인": "caregiver", "간호간병": "nursingCare",
+  "간병인": "caregiver", "간호간병": "nursingCare", "간통": "nursingCare", "간간통": "nursingCare",
 
+   /* [실손의료비] */
+   "상해입원실손": "actualAccidentIn", "상해통원실손": "actualAccidentOut", "질병입원실손": "actualDiseaseIn",
+   "질병통원실손": "actualDiseaseOut", "비급여": "nonBenefit",
+   "상입실": "actualAccidentIn", "상통실": "actualAccidentOut", "질입실": "actualDiseaseIn",
+   "질통실": "actualDiseaseOut", "비": "nonBenefit",
+
+   /* [기타 및 추가 항목] */
+   "산정특례": "specialCaseOnce", "산정특례1회": "specialCaseOnce", "산정특례연간": "specialCaseYear", "산정1년": "specialCaseOnce",
+   "1인실": "oneRoom", "다인실": "multiRoom", "골절": "fractureDiagnosis", "골절수술": "fractureSurgery",
+   "깁스": "castTreatment", "화상": "burnDiagnosis", "화상수술": "burnSurgery", "배상": "liability", "배상책임": "liability", 
+   "응급": "emergency", "응급실": "emergency", "비응급": "emergency", "비응급실": "emergency" 
+      
   /* [운전자] */
   "교통사고처리지원금": "trafficSupport", "교사처": "trafficSupport",
   "변호사선임": "lawyerFee", "변호사": "lawyerFee", "변호사선임비": "lawyerFee",

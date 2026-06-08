@@ -51,7 +51,7 @@ const aliases = {
    "산정특례": "specialCaseOnce", "산정특례1회": "specialCaseOnce", "산정특례연간": "specialCaseYear", "산정1년": "specialCaseOnce",
    "1인실": "oneRoom", "다인실": "multiRoom", "골절": "fractureDiagnosis", "골절수술": "fractureSurgery",
    "깁스": "castTreatment", "화상": "burnDiagnosis", "화상수술": "burnSurgery", "배상": "liability", "배상책임": "liability", 
-   "응급": "emergency", "응급실": "emergency", "비응급": "emergency", "비응급실": "emergency" 
+   "응급": "emergency", "응급실": "emergency", "비응급": "emergency", "비응급실": "emergency" ,
       
   /* [운전자] */
   "교통사고처리지원금": "trafficSupport", "교사처": "trafficSupport",
